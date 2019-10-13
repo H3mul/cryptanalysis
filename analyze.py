@@ -18,6 +18,7 @@ from break_atbash import break_atbash
 
 def printDecryptions(decryptions):
     print()
+    decryptions = sorted(decryptions, key = lambda x : x[1], reverse=True)
     for decryption in decryptions[:5]:
         print("{:<s} (score:{:<.5f}) key:{:<s} ".format(*decryption))
     print()
@@ -46,6 +47,8 @@ scorer = ngram.NgramScorer(frequency.english.trigrams)
 
 print("[+] Analysing ciphertext: | %s |" % ctext)
 
+
+# Analyze index of coincidence
 ioc = frequency.index_of_coincidence(re.sub('[^A-Z]','',ctext.upper()))
 ioc_language_map = {'English' : 0.06506, 'French' : 0.07862, 'German' : 0.07180, 'Italian' : 0.07413, 'Portugese' : 0.07786, 'Spanish' : 0.07430, 'Swedish' : 0.05897}
 ioc_thres = 0.10 #%
@@ -61,12 +64,18 @@ else:
     print()
     print(', '.join(map(lambda x: "%s (%.5f)" % (x[0], x[1]), ioc_language_map.items())))
     print()
-    
-print("[+] Attempting Caesar:")
-printDecryptions(break_caesar(ctext, scorer))
 
-print("[+] Attempting Caesar Box:")
-printDecryptions(break_caesarbox(ctext, scorer))
 
-print("[+] Attempting Atbash:")
-printDecryptions(break_atbash(ctext, scorer))
+# Run analysis for a few simple ciphers
+analysises = [
+    (break_caesar(ctext, scorer), "Caesar"),
+    (break_caesarbox(ctext, scorer), "Caesar Box"),
+    (break_atbash(ctext, scorer), "AtBash")
+]
+
+# Sort by best result in analysis
+analysises = sorted(analysises, key = lambda x : max(map(lambda y : y[1], x[0])), reverse=True)
+
+for analysis in analysises:
+    print("[+] Attempting %s:" % analysis[1])
+    printDecryptions(analysis[0])
