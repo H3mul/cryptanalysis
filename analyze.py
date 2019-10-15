@@ -9,9 +9,9 @@ import argparse
 from lantern.analysis import frequency
 from lantern.fitness import ngram
 
-from break_caesar import break_caesar
-from break_caesarbox import break_caesarbox
-from break_atbash import break_atbash
+from ciphers.break_caesar import break_caesar
+from ciphers.break_caesarbox import break_caesarbox
+from ciphers.break_atbash import break_atbash
 
 ###########################
 # Helper Funcs
